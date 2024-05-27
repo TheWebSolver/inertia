@@ -17,12 +17,12 @@ class ResponseFactory {
 	private static ResponseFactory $instance;
 
 	/** @var mixed[] */
-	private array $shared    = array();
-	private string $template = Inertia::APP;
-	private string $version  = '1.0';
+	protected array $shared    = array();
+	protected string $template = Inertia::APP;
+	protected string $version  = '1.0';
 
 	/** @var array<string,mixed> */
-	private array $body;
+	protected array $body;
 
 	final public static function inertia(): self {
 		return Adapter::app()?->has( id: Inertia::APP )
