@@ -13,7 +13,7 @@ use Closure;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class ResponseFactory {
+abstract class ResponseFactory {
 	private static ResponseFactory $instance;
 
 	/** @var mixed[] */
@@ -87,14 +87,10 @@ class ResponseFactory {
 	}
 
 	/** Ensures Client-Side Rendering to create SPA using InertiaJS. */
-	protected function json( ResponseInterface $previous ): ?ResponseInterface {
-		return null;
-	}
+	abstract protected function json( ResponseInterface $previous ): ?ResponseInterface;
 
 	/** Ensures Server-Side Rendering for new request using the root template file. */
-	protected function html( ResponseInterface $previous ): ?ResponseInterface {
-		return null;
-	}
+	abstract protected function html( ResponseInterface $previous ): ?ResponseInterface;
 
 	/**
 	 * @phpstan-param array<string,mixed> $props
