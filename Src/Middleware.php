@@ -9,29 +9,39 @@ declare( strict_types = 1 );
 
 namespace TheWebSolver\Codegarage\Lib\Inertia;
 
+use Closure;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 class Middleware implements MiddlewareInterface {
-	private readonly ClientResource $script;
+	private readonly Closure $subscriber;
 	private readonly string $rootView;
+	private readonly string $version;
 
-	public function set( ClientResource $script, string $rootView = '' ): void {
-		$this->rootView = $rootView;
-		$this->script   = $script;
+	public function set(
+		Closure $subscriber = null,
+		string $version = '1.0',
+		string $rootView = ''
+	): static {
+		$this->subscriber = $subscriber;
+		$this->rootView   = $rootView;
+		$this->version    = $version;
+
+		return $this;
 	}
 
 	public function process( ServerRequestInterface $request, RequestHandlerInterface $handler ): ResponseInterface {
 		$response = Header::Vary->addTo( Adapter::responseFrom( $request ), value: Header::Inertia->value );
 
-		// This is just a fallback. The version must always be set using script version.
-		Inertia::setVersion( $request->getProtocolVersion() );
+		// Run subscriber during middleware process.
+		if ( $this->subscriber ?? false ) {
+			( $this->subscriber )();
+		}
 
-		if ( isset( $this->script ) ) {
-			Adapter::subscribeWith( $this->script );
-			Inertia::setVersion( $this->script->version );
+		if ( $this->version ?? false ) {
+			Inertia::setVersion( $this->version );
 		}
 
 		Inertia::share(

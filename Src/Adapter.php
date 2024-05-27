@@ -1,6 +1,6 @@
 <?php
 /**
- * Adapter to interact with external libraries.
+ * Adapter for PSR11 Container and other libraries compatibility.
  *
  * @package TheWebSolver\Codegarage\Library
  */
@@ -12,8 +12,6 @@ namespace TheWebSolver\Codegarage\Lib\Inertia;
 use ValueError;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
-use TheWebSolver\Codegarage\Helper\Event;
-use TheWebSolver\Codegarage\Base\Commander;
 use Psr\Http\Message\ServerRequestInterface;
 
 class Adapter {
@@ -44,35 +42,5 @@ class Adapter {
 				static::MIDDLEWARE_RESPONSE
 			)
 		);
-	}
-
-	/**
-	 * @phpstan-param mixed[]  $receiverArgs
-	 * @phpstan-param string[] $ids
-	 * @return ?Event
-	 */
-	public static function subscribeWith( ClientResource $script ) {
-		$receiver = static function() use ( $script ) {
-			\wp_enqueue_script(
-				handle: Inertia::APP,
-				src: $script->url,
-				deps: $script->dependencies,
-				ver: $script->version,
-				args: array( 'in_footer' => true )
-			);
-		};
-
-		if ( class_exists( '\\TheWebSolver\\Codegarage\\Helper\\Event' ) ) {
-			return Event::subscribe( to: 'wp_enqueue_scripts' )
-				->when( Inertia::APP )
-				->needs( reason: 'registration of client file' )
-				->do( command: Commander::Action->resolve( $receiver ) );
-		}
-
-		if ( function_exists( '\\add_action' ) ) {
-			\add_action( hook_name: 'wp_enqueue_scripts', callback: $receiver );
-		}
-
-		return null;
 	}
 }
