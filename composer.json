@@ -21,6 +21,7 @@
       "TheWebSolver\\Codegarage\\Lib\\": "Src/"
     }
   },
+  "minimum-stability": "dev",
   "suggest": {
     "nyholm/psr7": "Allows using implementation of PSR7"
   }
