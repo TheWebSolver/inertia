@@ -16,6 +16,8 @@ use Psr\Http\Message\ServerRequestInterface;
 abstract class ResponseFactory {
 	private static ResponseFactory $instance;
 
+	private ?Closure $subscriber = null;
+
 	/** @var mixed[] */
 	protected array $shared    = array();
 	protected string $template = Inertia::APP;
@@ -28,6 +30,16 @@ abstract class ResponseFactory {
 		return Adapter::app()?->has( id: Inertia::APP )
 			? Adapter::app()->get( id: Inertia::APP )
 			: ( static::$instance ??= new static() );
+	}
+
+	public function subscribe( Closure|false|null $subscriber = null ): void {
+		if ( false === $subscriber ) {
+			( $this->subscriber )();
+
+			return;
+		}
+
+		$this->subscriber ??= $subscriber;
 	}
 
 	public function setVersion( string $version ): void {

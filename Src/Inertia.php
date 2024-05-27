@@ -20,6 +20,7 @@ use Psr\Http\Message\ServerRequestInterface;
  * @method static string                                       getVersion()
  * @method static void                                         share(string|array $data, mixed $value = null)
  * @method static \TheWebSolver\Codegarage\Lib\Inertia\Partial partial(Closure $callback)
+ * @method static void                                         subscribe(?Closure $subscriber)
  * @method static \Psr\Http\Message\ResponseInterface          reloadServer(\Psr\Http\Message\ServerRequestInterface $request)
  * @method static \Psr\Http\Message\ResponseInterface          render(\Psr\Http\Message\ServerRequestInterface $request, string $component, array $props = array())
  */

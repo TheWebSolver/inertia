@@ -16,18 +16,12 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 class Middleware implements MiddlewareInterface {
-	private readonly Closure $subscriber;
 	private readonly string $rootView;
 	private readonly string $version;
 
-	public function set(
-		Closure $subscriber = null,
-		string $version = '1.0',
-		string $rootView = ''
-	): static {
-		$this->subscriber = $subscriber;
-		$this->rootView   = $rootView;
-		$this->version    = $version;
+	public function set( string $version = '1.0', string $rootView = '' ): static {
+		$this->rootView ??= $rootView;
+		$this->version  ??= $version;
 
 		return $this;
 	}
@@ -36,9 +30,7 @@ class Middleware implements MiddlewareInterface {
 		$response = Header::Vary->addTo( Adapter::responseFrom( $request ), value: Header::Inertia->value );
 
 		// Run subscriber during middleware process.
-		if ( $this->subscriber ?? false ) {
-			( $this->subscriber )();
-		}
+		Inertia::subscribe( subscriber: false );
 
 		if ( $this->version ?? false ) {
 			Inertia::setVersion( $this->version );
