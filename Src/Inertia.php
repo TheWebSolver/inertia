@@ -25,6 +25,14 @@ use Psr\Http\Message\ServerRequestInterface;
 class Inertia {
 	public const APP = 'inertia';
 
+	/** @phpstan-param class-string<ResponseFactory> */
+	private static string $factoryClassName = ResponseFactory::class;
+
+	/** @phpstan-param class-string<ResponseFactory> */
+	public static function setFactory( string $classname ): void {
+		self::$factoryClassName = $classname;
+	}
+
 	/**
 	 * Acts as facade accessor for Inertia's response factory.
 	 *
@@ -32,7 +40,7 @@ class Inertia {
 	 * @uses ResponseFactory::inertia()
 	 */
 	public static function __callStatic( string $method, array $args ) {
-		return ! method_exists( $factory = ResponseFactory::inertia(), $method )
+		return ! method_exists( $factory = self::$factoryClassName::inertia(), $method )
 			? throw new BadMethodCallException( message: "Inertia {$method} does not exist.", code: 404 )
 			: $factory->$method( ...$args );
 	}

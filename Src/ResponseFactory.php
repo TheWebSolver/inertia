@@ -24,10 +24,10 @@ class ResponseFactory {
 	/** @var array<string,mixed> */
 	protected array $body;
 
-	final public static function inertia(): self {
+	final public static function inertia(): static {
 		return Adapter::app()?->has( id: Inertia::APP )
 			? Adapter::app()->get( id: Inertia::APP )
-			: ( self::$instance ??= new self() );
+			: ( static::$instance ??= new static() );
 	}
 
 	public function setVersion( string $version ): void {
