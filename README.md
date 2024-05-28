@@ -56,7 +56,7 @@ class InertiaResponseFactory extends ResponseFactory {
 
 ### DI and Auto-wiring
 #### Option 1: Using App Container
-If your project has app Container that implements `Psr\Container\ContainerInterface`, set binding using it. We'll assume that app container supports singleton design pattern. If it does not, use [Option 2](#OPTION2).
+If your project has app Container that implements `Psr\Container\ContainerInterface`, set binding using it. We'll assume that app container supports singleton design pattern. If it does not, use [Option 2](#option-2-using-inertia-api).
 
 ```php
 use TheWebSolver\Codegarage\Lib\Inertia\Adapter;
@@ -72,7 +72,7 @@ $appContainer->singleton(
 );
 ```
 
-#### <a href="OPTION2"></a>Option 2: Using Inertia API
+#### Option 2: Using Inertia API
 Inject factory directly to the Inertia app.
 
 ```php
