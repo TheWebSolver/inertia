@@ -66,9 +66,7 @@ abstract class ResponseFactory {
 
 	/** @link https://inertiajs.com/partial-reloads */
 	public function partial( Closure $prop ): Partial {
-		return Adapter::app()?->has( id: Adapter::PARTIAL_ALIAS )
-			? Adapter::app()->get( id: Adapter::PARTIAL_ALIAS )->set( data: $prop )
-			: ( new Partial() )->set( data: $prop );
+		return new Partial( data: $prop );
 	}
 
 	public function reloadServer( ServerRequestInterface $request ): ResponseInterface {
@@ -100,10 +98,10 @@ abstract class ResponseFactory {
 	}
 
 	/** Ensures Client-Side Rendering to create SPA using InertiaJS. */
-	abstract protected function json( ResponseInterface $previous ): ?ResponseInterface;
+	abstract protected function json( ResponseInterface $previous ): ResponseInterface;
 
 	/** Ensures Server-Side Rendering for new request using the root template file. */
-	abstract protected function html( ResponseInterface $previous ): ?ResponseInterface;
+	abstract protected function html( ResponseInterface $previous ): ResponseInterface;
 
 	/**
 	 * @phpstan-param array<string,mixed> $props
