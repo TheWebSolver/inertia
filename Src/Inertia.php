@@ -10,6 +10,7 @@ declare( strict_types = 1 );
 namespace TheWebSolver\Codegarage\Lib\Inertia;
 
 use Closure;
+use LogicException;
 use RuntimeException;
 use BadMethodCallException;
 use Psr\Http\Message\MessageInterface;
@@ -44,16 +45,7 @@ class Inertia {
 	 * @uses ResponseFactory::inertia()
 	 */
 	public static function __callStatic( string $method, array $args ) {
-		if ( ! static::$factoryClassName ) {
-			throw new RuntimeException(
-				sprintf(
-					'A factory instance that extends "%s" must be provided for inertia to return the response.',
-					ResponseFactory::class
-				)
-			);
-		}
-
-		return ! method_exists( $factory = static::$factoryClassName::inertia(), $method )
+		return ! method_exists( $factory = static::resolveFactory(), $method )
 			? throw new BadMethodCallException( message: "Inertia {$method} does not exist.", code: 404 )
 			: $factory->$method( ...$args );
 	}
@@ -64,5 +56,34 @@ class Inertia {
 
 	public static function sameVersion( ServerRequestInterface $request ): bool {
 		return static::getVersion() === Header::Version->of( $request );
+	}
+
+	protected static function resolveFactory(): ResponseFactory {
+		$container = Adapter::app();
+
+		if ( $container ) {
+			if ( $container->has( id: ResponseFactory::class ) ?? false ) {
+				return ResponseFactory::inertia();
+			}
+
+			throw new LogicException(
+				sprintf(
+					'Container could not resolve concrete for "%s". Add container binding and try again.',
+					ResponseFactory::class
+				)
+			);
+		}
+
+		if ( static::$factoryClassName ) {
+			return static::$factoryClassName::inertia();
+		}
+
+
+		throw new RuntimeException(
+			sprintf(
+				'A factory instance that extends "%s" must be provided for inertia to return the response.',
+				ResponseFactory::class
+			)
+		);
 	}
 }
