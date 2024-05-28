@@ -10,6 +10,8 @@ declare( strict_types = 1 );
 namespace TheWebSolver\Codegarage\Lib\Inertia;
 
 use Closure;
+use TypeError;
+use LogicException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -17,6 +19,7 @@ abstract class ResponseFactory {
 	private static ResponseFactory $instance;
 
 	private ?Closure $subscriber = null;
+	private bool $hasSubscriber = false;
 
 	/** @var mixed[] */
 	protected array $shared    = array();
@@ -32,14 +35,12 @@ abstract class ResponseFactory {
 			: ( static::$instance ??= new static() );
 	}
 
-	public function subscribe( Closure|false|null $subscriber = null ): void {
-		if ( false === $subscriber ) {
-			( $this->subscriber )();
-
-			return;
-		}
-
-		$this->subscriber ??= $subscriber;
+	/**
+	 * @throws LogicException When more than one argument passed as subscriber.
+	 * @throws TypeError      When appropriate type not passed.
+	 */
+	public function subscribe( Closure|false|null $subscriber = null ): mixed {
+		return $this->onSubscription( func_get_args() );
 	}
 
 	public function setVersion( string $version ): void {
@@ -188,5 +189,37 @@ abstract class ResponseFactory {
 		$array[ array_shift( $keys ) ] = $value;
 
 		return $array;
+	}
+
+	/** @param mixed[] $args */
+	private function onSubscription( array $args ) {
+		$method        = Inertia::class . '::subscribe()';
+		$nullOrClosure = 'either "null" or a "Closure" instance';
+
+		if ( 1 !== ( $count = count( $args ) ) ) {
+			throw new LogicException(
+				sprintf(
+					'%1$s only accepts "1" argument: %2$s. Total "%3$s" argument passed.',
+					$method,
+					$nullOrClosure,
+					$count
+				)
+			);
+		}
+
+		$arg      = reset( $args );
+		$invoking = $this->hasSubscriber && false === $arg;
+
+		if ( $subscribing = ! $this->hasSubscriber && ( null === $arg || $arg instanceof Closure ) ) {
+			$this->hasSubscriber = true;
+			$this->subscriber    = $arg;
+
+			return null;
+		}
+
+		return match ( true ) {
+			$subscribing, $invoking => null === $this->subscriber ? null : ( $this->subscriber )(),
+			default                 => throw new TypeError( "$method only accepts $nullOrClosure." )
+		};
 	}
 }

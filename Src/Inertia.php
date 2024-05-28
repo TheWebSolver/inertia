@@ -10,8 +10,6 @@ declare( strict_types = 1 );
 namespace TheWebSolver\Codegarage\Lib\Inertia;
 
 use Closure;
-use TypeError;
-use LogicException;
 use RuntimeException;
 use BadMethodCallException;
 use Psr\Http\Message\MessageInterface;
@@ -32,7 +30,6 @@ class Inertia {
 
 	/** @phpstan-param class-string<ResponseFactory> */
 	private static ?string $factoryClassName = null;
-	private static bool $hasSubscriber = false;
 
 	/** @phpstan-param class-string<ResponseFactory> */
 	public static function setFactory( string $classname ): void {
@@ -56,10 +53,6 @@ class Inertia {
 			);
 		}
 
-		if ( 'subscribe' === $method ) {
-			return static::onSubscription( $args );
-		}
-
 		return ! method_exists( $factory = static::$factoryClassName::inertia(), $method )
 			? throw new BadMethodCallException( message: "Inertia {$method} does not exist.", code: 404 )
 			: $factory->$method( ...$args );
@@ -71,31 +64,5 @@ class Inertia {
 
 	public static function sameVersion( ServerRequestInterface $request ): bool {
 		return static::getVersion() === Header::Version->of( $request );
-	}
-
-	/**
-	 * @param mixed[] $args
-	 * @throws LogicException When more than one argument passed as subscriber.
-	 * @throws TypeError      When appropriate type not passed.
-	 */
-	private static function onSubscription( array $args ) {
-		$method        = static::class . '::subscribe()';
-		$nullOrClosure = 'either "null" or a "Closure" instance';
-
-		if ( count( $args ) !== 1 ) {
-			throw new LogicException( "$method only accepts 1 argument: $nullOrClosure." );
-		}
-
-		$arg      = reset( $args );
-		$invoking = static::$hasSubscriber && false === $arg;
-
-		if ( $subscribing = ! static::$hasSubscriber && ( null === $arg || $arg instanceof Closure ) ) {
-			static::$hasSubscriber = true;
-		}
-
-		return match ( true ) {
-			$subscribing, $invoking => static::$factoryClassName::inertia()->subscribe( $arg ),
-			default                 => throw new TypeError( "$method only accepts $nullOrClosure." )
-		};
 	}
 }
