@@ -7,6 +7,12 @@ Install library using composer command:
 $ composer require thewebsolver/inertia
 ```
 
+For seamless handling of Middlewares and storing each middleware response, require [Pipeline][pipeline] library and use it in your request handler. For more details see [pipeline docs][pipelineDocs].
+
+```sh
+$ composer require thewebsolver/pipeline
+```
+
 ## Usage
 Use this InertiaJS library in your own PHP project and create a Single-Page Application hassle-free.
 
@@ -110,3 +116,5 @@ Route::get( '/posts/', function( ServerRequestInterface $request ) {
 [PSR7]: https://www.php-fig.org/psr/psr-7/
 [PSR11]: https://www.php-fig.org/psr/psr-11/
 [PSR15]: https://www.php-fig.org/psr/psr-15/
+[pipeline]: https://github.com/TheWebSolver/pipeline
+[pipelineDocs]: https://github.com/TheWebSolver/pipeline#psr-7--psr-15-bridge
