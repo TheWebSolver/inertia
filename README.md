@@ -20,6 +20,14 @@ To be able to use InertiaJS, create Response Factory that returns appropriate re
 
 > ❗IMPORTANT NOTE❗: Your Request Handler should always pass response returned by previous middleware to the request being passed to next middleware's `\Psr\Http\Server\MiddlewareInterface::process()` method.
 
+> 🌟 If you're using [Pipeline][pipeline], then register request attribute name for setting/getting response as below and let pipeline handle the rest: 🌟
+```php
+use TheWebSolver\Codegarage\Lib\PipelineBridge;
+use TheWebSolver\Codegarage\Lib\Inertia\Adapter;
+
+InertiaAdapter::setMiddlewareResponseKey( PipelineBridge::MIDDLEWARE_RESPONSE );
+```
+
 ### Create Factory
 ```php
 use Psr\Http\Message\ResponseInterface;
