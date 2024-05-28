@@ -30,8 +30,8 @@ abstract class ResponseFactory {
 	protected array $body;
 
 	final public static function inertia(): static {
-		return Adapter::app()?->has( id: Inertia::APP )
-			? Adapter::app()->get( id: Inertia::APP )
+		return Adapter::app()?->has( id: self::class )
+			? Adapter::app()->get( id: self::class )
 			: ( static::$instance ??= new static() );
 	}
 
