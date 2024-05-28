@@ -11,14 +11,8 @@ namespace TheWebSolver\Codegarage\Lib\Inertia;
 
 use Closure;
 
-class Partial {
-	protected readonly Closure $data;
-
-	public function set( Closure $data ): static {
-		$this->data = $data;
-
-		return $this;
-	}
+readonly class Partial {
+	public function __construct( private Closure $data ) {}
 
 	public function __invoke() {
 		return ( $this->data )();
