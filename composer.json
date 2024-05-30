@@ -1,10 +1,9 @@
 {
   "name": "thewebsolver/inertia",
   "description": "InertiaJS adapter that follows PSR7, PSR11, & PSR15 implementation",
-  "version": "1.0.0",
   "license": "GPL-3.0-or-later",
   "type": "library",
-  "keywords": ["psr-7", "psr-11", "psr-15", "inertia", "adapter"],
+  "keywords": ["psr-7", "psr-11", "psr-15", "inertia", "inertiajs", "adapter"],
   "require": {
     "php": ">=8.2.0",
     "psr/http-message": "^2.0",
@@ -22,7 +21,9 @@
     }
   },
   "minimum-stability": "dev",
+  "prefer-stable": true,
   "suggest": {
-    "nyholm/psr7": "Allows using implementation of PSR7"
+    "nyholm/psr7": "Allows using implementation of PSR7",
+    "thewebsolver/pipeline": "Allows handling PSR-15 Server Middleware Stack inside Request Handler"
   }
 }
