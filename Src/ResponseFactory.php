@@ -189,7 +189,11 @@ abstract class ResponseFactory {
 		return $array;
 	}
 
-	/** @param mixed[] $args */
+	/**
+	 * @param mixed[] $args
+	 * @throws LogicException When more than one argument passed as subscriber.
+	 * @throws TypeError      When appropriate type not passed.
+	 */
 	private function onSubscription( array $args ) {
 		$method        = Inertia::class . '::subscribe()';
 		$nullOrClosure = 'either "null" or a "Closure" instance';
