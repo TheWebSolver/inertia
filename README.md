@@ -1,4 +1,7 @@
 ## Welcome
+
+**This library is actively being developed and is unstable.**
+
 An **[InertiaJS][Inertia]** Adapter for PHP projects that uses implementation of **[PSR7 (HTTP Message Interface)][PSR7]**, **[PSR15 (Server Request Handlers)][PSR15]**, and optionally **[PSR11 (Container Interface)][PSR11]**.
 
 ## Installation (via Composer)
