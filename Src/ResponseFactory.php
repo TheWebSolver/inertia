@@ -69,9 +69,11 @@ abstract class ResponseFactory {
 		return new Partial( data: $prop );
 	}
 
-	public function reloadServer( ServerRequestInterface $request ): ResponseInterface {
-		$target   = $request->getRequestTarget();
-		$response = Adapter::responseFrom( $request );
+	public function reloadServer(
+		ServerRequestInterface $request,
+		ResponseInterface $response
+	): ResponseInterface {
+		$target = $request->getRequestTarget();
 
 		return ! Inertia::active( $request )
 			? $response->withStatus( code: 302 )->withHeader( 'Location', value: $target )
@@ -83,10 +85,10 @@ abstract class ResponseFactory {
 
 	public function render(
 		ServerRequestInterface $request,
+		ResponseInterface $response,
 		string $component,
 		array $props = array()
-	): ?ResponseInterface {
-		$response   = Adapter::responseFrom( $request );
+	): ResponseInterface {
 		$this->body = array(
 			'component' => $component,
 			'props'     => array( ...$this->shared, ...$this->resolved( $props, $request, $component ) ),
@@ -104,10 +106,14 @@ abstract class ResponseFactory {
 	abstract protected function html( ResponseInterface $previous ): ResponseInterface;
 
 	/**
-	 * @phpstan-param array<string,mixed> $props
-	 * @phpstan-return array<string,mixed>
+	 * @param array<string,mixed> $props
+	 * @return array<string,mixed>
 	 */
-	private function resolved( array $props, ServerRequestInterface $request, string $component ): array {
+	private function resolved(
+		array $props,
+		ServerRequestInterface $request,
+		string $component
+	): array {
 		$isOnSamePage = Header::PartialComponent->of( $request ) === $component;
 
 		/**

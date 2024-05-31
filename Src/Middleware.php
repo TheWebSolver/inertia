@@ -25,8 +25,11 @@ class Middleware implements MiddlewareInterface {
 		return $this;
 	}
 
-	public function process( ServerRequestInterface $request, RequestHandlerInterface $handler ): ResponseInterface {
-		$response = Header::Vary->addTo( Adapter::responseFrom( $request ), value: Header::Inertia->value );
+	public function process(
+		ServerRequestInterface $request,
+		RequestHandlerInterface $handler
+	): ResponseInterface {
+		$response = Header::Vary->addTo( $handler->handle( $request ), value: Header::Inertia->value );
 
 		// Run subscriber during middleware process.
 		Inertia::subscribe( subscriber: false );
@@ -47,7 +50,9 @@ class Middleware implements MiddlewareInterface {
 			return $response;
 		}
 
-		return $this->needsCacheBusting( $request ) ? Inertia::reloadServer( $request ) : $response;
+		return $this->needsCacheBusting( $request )
+			? Inertia::reloadServer( $request, $response )
+			: $response;
 	}
 
 	private function needsCacheBusting( ServerRequestInterface $request ): bool {

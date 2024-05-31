@@ -41,9 +41,11 @@ class Inertia {
 	 * Acts as facade accessor for Inertia's response factory.
 	 *
 	 * @throws RuntimeException When a child-class of ResponseFactory not set.
+	 * @throws LogicException   When container exists but no binding found.
 	 * @throws BadMethodCallException When trying to invoke undefined method inside Response Factory.
 	 * @uses ResponseFactory::inertia()
 	 */
+	// phpcs:ignore Squiz.Commenting.FunctionCommentThrowTag.WrongNumber -- Exactly 3 exception thrown.
 	public static function __callStatic( string $method, array $args ) {
 		return ! method_exists( $factory = static::resolveFactory(), $method )
 			? throw new BadMethodCallException( message: "Inertia {$method} does not exist.", code: 404 )
@@ -77,7 +79,6 @@ class Inertia {
 		if ( static::$factoryClassName ) {
 			return static::$factoryClassName::inertia();
 		}
-
 
 		throw new RuntimeException(
 			sprintf(
