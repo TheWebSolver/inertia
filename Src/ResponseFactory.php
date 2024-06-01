@@ -40,6 +40,10 @@ abstract class ResponseFactory {
 	 * @throws TypeError      When appropriate type not passed.
 	 */
 	public function subscribe( Closure|false|null $subscriber = null ): mixed {
+		if ( $this->hasSubscriber && false !== $subscriber ) {
+			return null;
+		}
+
 		return $this->onSubscription( func_get_args() );
 	}
 
